@@ -1,0 +1,10 @@
+data/*.csv
+data/*.json
+data/*.parquet
+data/*.png
+data/*.json
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+.env

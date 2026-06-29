@@ -1,0 +1,89 @@
+version: "3.8"
+
+networks:
+  bigdata-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+services:
+  namenode:
+    build:
+      context: ./namenode
+    container_name: namenode
+    hostname: namenode
+    networks:
+      bigdata-net:
+        ipv4_address: 172.20.0.10
+    ports:
+      - "9870:9870"   # HDFS Web UI
+      - "8080:8080"   # Spark Master Web UI
+      - "7077:7077"   # Spark Master port
+      - "8888:8888"   # Jupyter Notebook
+    environment:
+      - CLUSTER_NAME=bigdata-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - HDFS_CONF_dfs_replication=2
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+    volumes:
+      - namenode-data:/hadoop/dfs/name
+      - ../data:/data
+      - ../notebooks:/notebooks
+      - ../scripts:/scripts
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9870"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  datanode-1:
+    build:
+      context: ./datanode
+    container_name: datanode-1
+    hostname: datanode-1
+    networks:
+      bigdata-net:
+        ipv4_address: 172.20.0.11
+    ports:
+      - "9864:9864"   # DataNode Web UI
+      - "8081:8081"   # Spark Worker Web UI
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - HDFS_CONF_dfs_replication=2
+      - HDFS_CONF_dfs_datanode_address=0.0.0.0:9866
+      - HDFS_CONF_dfs_datanode_http_address=0.0.0.0:9864
+      - SPARK_WORKER_PORT=7078
+      - SPARK_WORKER_WEBUI_PORT=8081
+    volumes:
+      - datanode1-data:/hadoop/dfs/data
+    depends_on:
+      - namenode
+
+  datanode-2:
+    build:
+      context: ./datanode
+    container_name: datanode-2
+    hostname: datanode-2
+    networks:
+      bigdata-net:
+        ipv4_address: 172.20.0.12
+    ports:
+      - "9865:9864"   # DataNode Web UI
+      - "8082:8081"   # Spark Worker Web UI
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - HDFS_CONF_dfs_replication=2
+      - HDFS_CONF_dfs_datanode_address=0.0.0.0:9866
+      - HDFS_CONF_dfs_datanode_http_address=0.0.0.0:9864
+      - SPARK_WORKER_PORT=7079
+      - SPARK_WORKER_WEBUI_PORT=8081
+    volumes:
+      - datanode2-data:/hadoop/dfs/data
+    depends_on:
+      - namenode
+
+volumes:
+  namenode-data:
+  datanode1-data:
+  datanode2-data:
