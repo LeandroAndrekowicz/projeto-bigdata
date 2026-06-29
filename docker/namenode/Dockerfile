@@ -33,7 +33,7 @@ RUN wget -q https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/
     && rm hadoop-${HADOOP_VERSION}.tar.gz
 
 # Spark
-RUN wget -q https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz \
+RUN wget -q https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz \
     && tar -xzf spark-${SPARK_VERSION}-bin-hadoop3.tgz -C /opt/ \
     && mv /opt/spark-${SPARK_VERSION}-bin-hadoop3 $SPARK_HOME \
     && rm spark-${SPARK_VERSION}-bin-hadoop3.tgz
