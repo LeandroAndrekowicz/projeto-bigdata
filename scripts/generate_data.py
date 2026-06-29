@@ -59,7 +59,7 @@ with open(json_path, "w", encoding="utf-8") as f:
 parquet_path = os.path.join(OUTPUT_DIR, "vendas.parquet")
 print(f"Escrevendo Parquet -> {parquet_path}")
 df = pd.DataFrame(registros)
-df["data_venda"] = pd.to_datetime(df["data_venda"])
+df["data_venda"] = pd.to_datetime(df["data_venda"]).dt.as_unit("us")
 table = pa.Table.from_pandas(df)
 pq.write_table(table, parquet_path, compression="snappy")
 
