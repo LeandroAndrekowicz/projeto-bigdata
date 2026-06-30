@@ -39,7 +39,7 @@ RUN wget -q https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-$
     && rm spark-${SPARK_VERSION}-bin-hadoop3.tgz
 
 # Python dependencies
-RUN pip3 install pyspark==${SPARK_VERSION} jupyter pandas pyarrow findspark
+RUN pip3 install pyspark==${SPARK_VERSION} jupyter pandas pyarrow findspark matplotlib
 
 # SSH sem senha (necessário para Hadoop)
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
